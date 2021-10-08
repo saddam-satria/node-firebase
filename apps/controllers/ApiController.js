@@ -5,6 +5,7 @@ const students = async (_req, res) => {
     const studentDocuments = await firestore.getDocs(studentsCollection);
 
     const students = studentDocuments.docs.map((doc) => doc.data());
+
     res.json({ students }).status(200);
   } catch (error) {
     res.json({ msg: error }).status(401);
@@ -41,4 +42,36 @@ const studentDelete = async (req, res) => {
   }
 };
 
-module.exports = { students, studentPost, studentDelete };
+const studentDetail = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const doc = await firestore.doc(studentsCollection, id);
+    const student = await (await firestore.getDoc(doc)).data();
+
+    res.json({ student }).status(200);
+  } catch (error) {
+    res.json({ msg: error }).status(401);
+  }
+};
+
+const studentUpdate = async (req, res) => {
+  const { id } = req.params;
+  const { name, degree, age, university } = req.body;
+
+  try {
+    const doc = await firestore.doc(studentsCollection, id);
+    const student = await firestore.updateDoc(doc, {
+      name,
+      degree,
+      age,
+      university,
+    });
+
+    res.json({ student }).status(200);
+  } catch (error) {
+    res.json({ msg: error }).status(401);
+  }
+};
+
+module.exports = { students, studentPost, studentDelete, studentDetail, studentUpdate };
