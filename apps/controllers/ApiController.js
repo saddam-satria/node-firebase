@@ -4,7 +4,7 @@ const students = async (_req, res) => {
   try {
     const studentDocuments = await firestore.getDocs(studentsCollection);
 
-    const students = studentDocuments.docs.map((doc) => doc.data());
+    const students = studentDocuments.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
     res.json({ students }).status(200);
   } catch (error) {
@@ -47,9 +47,9 @@ const studentDetail = async (req, res) => {
 
   try {
     const doc = await firestore.doc(studentsCollection, id);
-    const student = await (await firestore.getDoc(doc)).data();
+    const student = await await firestore.getDoc(doc);
 
-    res.json({ student }).status(200);
+    res.json({ student: { id: student.id, ...student.data() } }).status(200);
   } catch (error) {
     res.json({ msg: error }).status(401);
   }
