@@ -1,0 +1,74 @@
+<style>
+  .root {
+    display: flex;
+    justify-content: center;
+    height: 80vh;
+    align-items: center;
+  }
+  #customers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 50%;
+  }
+
+  #customers td,
+  #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  #customers tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  #customers tr:hover {
+    background-color: #ddd;
+  }
+
+  #customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04aa6d;
+    color: white;
+  }
+</style>
+
+<div class="root">
+  <table id="customers"></table>
+</div>
+
+<script>
+  const table = document.querySelector('table');
+  const students = async () => {
+    const res = await fetch('http://localhost:3030/api/students/', {
+      method: 'GET',
+    });
+    const data = await res.json();
+    studentsTable(data);
+  };
+
+  const studentsTable = (data) => {
+    const tr = document.createElement('tr');
+    table.innerHTML = ` 
+      <tr>
+      <th>name</th>
+      <th>degree</th>
+      <th>age</th>
+      <th>university</th>
+    </tr>
+        ${data.students
+          .map((student) => {
+            return `
+            <tr> 
+                <td>${student.name}</td><td>${student.degree}</td><td>${student.age}</td><td>${student.university}</td> 
+            </tr>
+          `;
+          })
+          .join(' ')}
+
+      `;
+  };
+
+  students();
+</script>
